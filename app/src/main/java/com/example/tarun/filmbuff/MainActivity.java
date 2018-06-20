@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,16 +27,40 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
 
     private ListView list;
+    Button page1;
+    TextView pageStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pageStatus = findViewById(R.id.pageStatus);
+
+        page1 = (Button)findViewById(R.id.firstPage);
+
 
         list = (ListView)findViewById(R.id.list);
         list.setOnItemClickListener(this);
 
+        final int[] page = {2};
+
         new checkConnectionStatus().execute("https://api.themoviedb.org/3/movie/popular?api_key=d745c3b81e0fdc9589414b237ae6a0ad&language=en-US&page=1");
+        pageStatus.setText("Showing Page : 1 of 992");
+
+
+        page1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new checkConnectionStatus().execute("https://api.themoviedb.org/3/movie/popular?api_key=d745c3b81e0fdc9589414b237ae6a0ad&language=en-US&page="+String.valueOf(page[0]));
+                pageStatus.setText("Showing Page :"+page[0]+ " of 992");
+                page[0] = page[0] + 1;
+
+
+            }
+        });
+
+
+
     }
 
     @Override
