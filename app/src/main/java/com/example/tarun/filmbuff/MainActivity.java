@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
 
     private ListView list;
-    Button page1;
+    Button next,previous;
     TextView pageStatus;
 
     @Override
@@ -36,26 +37,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         pageStatus = findViewById(R.id.pageStatus);
 
-        page1 = (Button)findViewById(R.id.firstPage);
+        next = (Button)findViewById(R.id.firstPage);
+        previous = findViewById(R.id.previous);
 
 
         list = (ListView)findViewById(R.id.list);
         list.setOnItemClickListener(this);
 
-        final int[] page = {2};
+        final int[] page = {1};
 
-        new checkConnectionStatus().execute("https://api.themoviedb.org/3/movie/popular?api_key=d745c3b81e0fdc9589414b237ae6a0ad&language=en-US&page=1");
+        new checkConnectionStatus().execute("https://api.themoviedb.org/3/movie/popular?api_key=d745c3b81e0fdc9589414b237ae6a0ad&language=en-US&page="+String.valueOf(page[0]));
         pageStatus.setText("Showing Page : 1 of 992");
 
 
-        page1.setOnClickListener(new View.OnClickListener() {
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new checkConnectionStatus().execute("https://api.themoviedb.org/3/movie/popular?api_key=d745c3b81e0fdc9589414b237ae6a0ad&language=en-US&page="+String.valueOf(page[0]));
-                pageStatus.setText("Showing Page :"+page[0]+ " of 992");
                 page[0] = page[0] + 1;
+                pageStatus.setText("Showing Page :"+page[0]+ " of 992");
+                new checkConnectionStatus().execute("https://api.themoviedb.org/3/movie/popular?api_key=d745c3b81e0fdc9589414b237ae6a0ad&language=en-US&page="+String.valueOf(page[0]));
 
 
+
+
+            }
+        });
+        previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(page[0]>1) {
+                    page[0] = page[0] - 1;
+                    pageStatus.setText("Showing Page :" + page[0] + " of 992");
+                    new checkConnectionStatus().execute("https://api.themoviedb.org/3/movie/popular?api_key=d745c3b81e0fdc9589414b237ae6a0ad&language=en-US&page=" + String.valueOf(page[0]));
+
+
+                }else{
+                    Toast.makeText(MainActivity.this, "Page 0 not exist", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
